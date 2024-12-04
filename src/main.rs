@@ -5,6 +5,7 @@ mod day02b;
 mod day03a;
 mod day03b;
 mod day04a;
+mod day04b;
 
 fn main() {
     let day = std::env::args().nth(1).expect("Please specify a day (e.g., `1`)");
@@ -16,6 +17,7 @@ fn main() {
         "3a" => day03a::run(),
         "3b" => day03b::run(),
         "4a" => day04a::run(),
+        "4b" => day04b::run(),
         _ => eprintln!("Day not implemented: {}", day),
     }
 }

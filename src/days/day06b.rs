@@ -14,7 +14,7 @@ fn solve(input: &str) -> i32 {
         for (j, &cell) in row.iter().enumerate() {
             if cell == b'.' {
                 let mut mod_map = map.iter().map(|line| line.to_vec()).collect::<Vec<_>>();
-                mod_map[i as usize][j as usize] = b'#';
+                mod_map[i][j] = b'#';
                 if walk_map(&mod_map) {
                     res += 1;
                 }
@@ -48,7 +48,7 @@ fn walk_map(map: &Vec<Vec<u8>>) -> bool {
         let (di, dj) = directions[direction_idx % directions.len()];
         let next_pos = (current_pos.0 + di, current_pos.1 + dj);
 
-        if out_of_bounds(next_pos, &map) {
+        if out_of_bounds(next_pos, map) {
             break; // Stop if out of bounds
         }
 
@@ -80,6 +80,6 @@ fn walk_map(map: &Vec<Vec<u8>>) -> bool {
     false
 }
 
-fn out_of_bounds((i, j): (isize, isize), map: &Vec<Vec<u8>>) -> bool {
+fn out_of_bounds((i, j): (isize, isize), map: &[Vec<u8>]) -> bool {
     i < 0 || j < 0 || i >= map.len() as isize || j >= map[0].len() as isize
 }

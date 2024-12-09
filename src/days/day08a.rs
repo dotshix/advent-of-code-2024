@@ -19,7 +19,7 @@ fn solve(input: &str) -> i32 {
         }
     }
 
-    for (key, val) in char_to_location.iter() {
+    for (_, val) in char_to_location.iter() {
         let gens = generate_combinations(val);
 
         for gen in gens {
@@ -42,7 +42,7 @@ fn solve(input: &str) -> i32 {
     antinodes_set.len() as i32
 }
 
-fn generate_combinations(points: &Vec<(usize, usize)>) -> Vec<Vec<(usize, usize)>> {
+fn generate_combinations(points: &[(usize, usize)]) -> Vec<Vec<(usize, usize)>> {
     points
         .iter()
         .combinations(2) // Generate all combinations of 2 pairs.

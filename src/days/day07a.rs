@@ -54,9 +54,7 @@ fn generate_combinations(expr: &str) -> Vec<Vec<char>> {
         .map(|inner| inner.iter().cloned())
         .multi_cartesian_product();
 
-    let res = cartesian_product.collect_vec();
-
-    res
+    cartesian_product.collect_vec()
 }
 
 fn eval(expr: &str) -> u64 {
@@ -66,16 +64,16 @@ fn eval(expr: &str) -> u64 {
     let mut num: u64 = 0;
 
     for ch in expr.chars() {
-        if ch.is_digit(10) {
+        if ch.is_ascii_digit() {
             num = num * 10 + ch.to_digit(10).unwrap() as u64;
-        } else if ops.contains(&ch) && !last_op.is_none() && last_op.unwrap() == '*' {
+        } else if ops.contains(&ch) && last_op.is_some() && last_op.unwrap() == '*' {
             let last_num = stk.pop().unwrap();
 
             stk.push(last_num * num);
 
             last_op = Some(ch);
             num = 0;
-        } else if ops.contains(&ch) && !last_op.is_none() && last_op.unwrap() == '+' {
+        } else if ops.contains(&ch) && last_op.is_some() && last_op.unwrap() == '+' {
 
             let last_num = stk.pop().unwrap();
             stk.push(num + last_num);

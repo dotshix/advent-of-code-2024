@@ -48,10 +48,7 @@ fn move_blocks(file: &mut [String], map: &mut HashMap<String, u32>) {
 
     while last_num != 0 {
         // find how many dots
-        let count = file[lpointer..]
-            .iter()
-            .take_while(|&&ref i| i == ".")
-            .count();
+        let count = file[lpointer..].iter().take_while(|&i| i == ".").count();
 
         // println!("Dots found: {count}");
 

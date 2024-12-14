@@ -16,6 +16,7 @@ mod day08a;
 mod day08b;
 mod day09a;
 mod day09b;
+mod day10a;
 
 pub fn run(day: &str) {
     match day {
@@ -37,6 +38,7 @@ pub fn run(day: &str) {
         "8b" => day08b::run(),
         "9a" => day09a::run(),
         "9b" => day09b::run(),
+        "10a" => day10a::run(),
 
         _ => eprintln!("Day not implemented: {}", day),
     }

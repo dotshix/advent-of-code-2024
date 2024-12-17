@@ -13,7 +13,7 @@ fn solve(input: &str) -> i32 {
     for (x, line) in map.iter().enumerate() {
         for (y, ch) in line.iter().enumerate() {
             if !seen.contains(&(x as isize, y as isize)) {
-                let (area, perimeter) = bfs(&(x as isize, y as isize), &ch, &map, &mut seen);
+                let (area, perimeter) = bfs(&(x as isize, y as isize), ch, &map, &mut seen);
                 // println!("{ch},{area},{perimeter}");
                 res += area * perimeter;
             }
@@ -30,7 +30,7 @@ fn bfs(
     seen: &mut HashSet<(isize, isize)>,
 ) -> (i32, i32) {
     // if seen break
-    if seen.contains(&start) {
+    if seen.contains(start) {
         return (0, 0);
     }
 
@@ -50,7 +50,7 @@ fn bfs(
         // println!("{x},{y}");
 
         area += 1;
-        perimeter += get_perimeter(&map, &(x, y), &ch);
+        perimeter += get_sides(map, &(x, y), ch);
         // println!("Perimeter: {perimeter}");
         for (dx, dy) in directions {
             let nx = x + dx;
@@ -72,26 +72,50 @@ fn bfs(
     (area, perimeter)
 }
 
-fn get_perimeter(map: &Vec<Vec<char>>, start: &(isize, isize), ch: &char) -> i32 {
+fn get_sides(map: &[Vec<char>], start: &(isize, isize), ch: &char) -> i32 {
     let rows = map.len() as isize;
-    let cols = map[0].len() as isize;
-    let mut perimeter = 0;
+    let cols = map.first().map_or(0, |row| row.len()) as isize;
+
     let (x, y) = *start;
+    let mut sides = 0;
 
-    let directions = [(0, 1), (0, -1), (1, 0), (-1, 0)];
+    // Helper to check bounds and return the character if valid
+    let get_char = |r: isize, c: isize| -> Option<char> {
+        if r >= 0 && r < rows && c >= 0 && c < cols {
+            Some(map[r as usize][c as usize])
+        } else {
+            None
+        }
+    };
 
-    for (dx, dy) in directions.iter() {
-        let nx = x + dx;
-        let ny = y + dy;
+    // Directions: (delta_x, delta_y, diag_x, diag_y)
+    let directions = [
+        ((1, 0), (0, -1), (1, -1)),   // DOWN-LEFT
+        ((-1, 0), (0, -1), (-1, -1)), // UP-LEFT
+        ((-1, 0), (0, 1), (-1, 1)),   // UP-RIGHT
+        ((1, 0), (0, 1), (1, 1)),     // DOWN-RIGHT
+    ];
 
-        if nx < 0 || ny < 0 || nx >= rows || ny >= cols {
-            // Out of bounds, add to perimeter
-            perimeter += 1;
-        } else if map[nx as usize][ny as usize] != *ch {
-            // Different character, add to perimeter
-            perimeter += 1;
+    for &((dx, dy1), (dx2, dy2), (diag_x, diag_y)) in &directions {
+        let down = get_char(x + dx, y + dy1);
+        let side = get_char(x + dx2, y + dy2);
+        let diag = get_char(x + diag_x, y + diag_y);
+
+        match (down, side, diag) {
+            (Some(d), Some(s), Some(diag)) if d == *ch && s == *ch && diag != *ch => sides += 1,
+            (Some(d), Some(s), _) if d != *ch && s != *ch => sides += 1,
+            _ => {}
+        }
+
+        // Handle out-of-bounds edge cases for each direction
+        if down.is_none() && side.is_none() {
+            sides += 1;
+        } else if down.is_none() && side.map_or(false, |s| s != *ch) {
+            sides += 1;
+        } else if side.is_none() && down.map_or(false, |d| d != *ch) {
+            sides += 1;
         }
     }
 
-    perimeter
+    sides
 }
